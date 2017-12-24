@@ -41,6 +41,22 @@ export class MercadoPagoCheckout {
         return await MercadoPagoCheckoutModule.startCheckoutForPaymentData(publicKey, preferenceId, params.backgroundColor, params.enableDarkFont);
     }
 
+    /**
+     * This function replicates the startForPaymentData function but with a custom flow.
+     *
+     * @param publicKey - MercadoPago API public Key
+     * @param preferenceId - MercadoPago Items preference id
+     * @returns {Promise.<*>} - Promise that if resolves gives a PaymentData object
+     */
+    static async collectPaymentDataFor(publicKey, preferenceId) {
+        const params = { ...defaultOptions, publicKey, preferenceId };
+
+        MercadoPagoCheckout._checkParams(params);
+
+        return await MercadoPagoCheckoutModule.collectPaymentDataFor(publicKey, preferenceId);
+    }
+
+
     static _validate(key, value) {
         if (typeof value === 'undefined') {
             throw `${key} required to start MercadoPago checkout`;
