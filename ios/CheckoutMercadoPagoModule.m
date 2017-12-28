@@ -109,6 +109,8 @@ RCT_EXPORT_METHOD(collectPaymentDataFor:(NSString *)publicKey :(NSString *)prefe
 	[decorationPreference setLightCustomFontWithName:@"OpenSans-Regular"];
 	[MercadoPagoCheckout setDecorationPreference: decorationPreference];
 
+	[MercadoPagoContext setLanguageWithLanguage:"es"];
+
 	//Set CheckoutPreference on MercadoPagoCheckout
 	CheckoutPreference *preference = [[CheckoutPreference alloc] initWith_id:preferenceId];
 	MercadoPagoCheckout *checkout = [[MercadoPagoCheckout alloc] initWithPublicKey:publicKey checkoutPreference:preference discount:nil navigationController:uiNavigationController];
