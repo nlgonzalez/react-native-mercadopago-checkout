@@ -12,6 +12,7 @@ import com.facebook.react.bridge.Promise;
 import com.mercadopago.core.MercadoPagoCheckout;
 import com.mercadopago.preferences.CheckoutPreference;
 import com.mercadopago.preferences.DecorationPreference;
+import com.mercadopago.preferences.FlowPreference;
 
 public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule {
     private MercadoPagoCheckoutEventListener eventResultListener;
@@ -67,6 +68,24 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
                 .startForPaymentData();
     }
 
+    @ReactMethod
+    public void collectPaymentDataFor(@NonNull String publicKey, @NonNull String checkoutPreferenceId, @NonNull Promise promise) {
+        this.setCurrentPromise(promise);
+
+        final DecorationPreference decorationPreference = this.createDecorationPreference("#C82027", false);
+        final FlowPreference flowPreference = this.createFlowPreference();
+        final CheckoutPreference checkoutPreference = new CheckoutPreference(checkoutPreferenceId);
+        final Activity currentActivity = this.getCurrentActivity();
+
+        new MercadoPagoCheckout.Builder()
+                .setDecorationPreference(decorationPreference)
+                .setFlowPreference(flowPreference)
+                .setCheckoutPreference(checkoutPreference)
+                .setActivity(currentActivity)
+                .setPublicKey(publicKey)
+                .startForPaymentData();
+    }
+
     private DecorationPreference createDecorationPreference(@NonNull String color, @NonNull Boolean enableDarkFont) {
         final DecorationPreference.Builder preferenceBuilder = new DecorationPreference.Builder().setBaseColor(color);
 
@@ -75,6 +94,19 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
         }
 
        return preferenceBuilder.build();
+    }
+
+    private FlowPreference createFlowPreference() {
+        final FlowPreference.Builder preferenceBuilder = new FlowPreference.Builder();
+        preferenceBuilder.disableBankDeals();
+        preferenceBuilder.disableDiscount();
+//        preferenceBuilder.disablePaymentResultScreen();
+//        preferenceBuilder.disablePaymentPendingScreen();
+//        preferenceBuilder.disablePaymentApprovedScreen();
+//        preferenceBuilder.disablePaymentRejectedScreen();
+//        preferenceBuilder.disableReviewAndConfirmScreen();
+        preferenceBuilder.disableInstallmentsReviewScreen();
+        return preferenceBuilder.build();
     }
 
     private void setCurrentPromise(@NonNull Promise promise) {
