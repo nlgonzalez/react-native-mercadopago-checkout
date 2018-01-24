@@ -81,18 +81,23 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
         final CheckoutPreference checkoutPreference = new CheckoutPreference(checkoutPreferenceId);
         final Activity currentActivity = this.getCurrentActivity();
 
-        final MercadoPagoCheckout checkoutBuilder = new MercadoPagoCheckout.Builder();
-        checkoutBuilder.setDecorationPreference(decorationPreference);
-        checkoutBuilder.setFlowPreference(flowPreference);
-        checkoutBuilder.setCheckoutPreference(checkoutPreference);
-        checkoutBuilder.setActivity(currentActivity);
-        checkoutBuilder.setPublicKey(publicKey);
-
         if (customerId != null) {
-            checkoutBuilder.setServicePreference(this.createServicePreference(accessToken, customerId));
+            new MercadoPagoCheckout.Builder()
+                .setDecorationPreference(decorationPreference)
+                .setCheckoutPreference(checkoutPreference)
+                .setServicePreference(this.createServicePreference(accessToken, customerId))
+                .setActivity(currentActivity)
+                .setPublicKey(publicKey)
+                .startForPaymentData();
         }
-
-        checkoutBuilder.startForPaymentData();
+        else {
+            new MercadoPagoCheckout.Builder()
+                .setDecorationPreference(decorationPreference)
+                .setCheckoutPreference(checkoutPreference)
+                .setActivity(currentActivity)
+                .setPublicKey(publicKey)
+                .startForPaymentData();
+        }
     }
 
     private DecorationPreference createDecorationPreference(@NonNull String color, @NonNull Boolean enableDarkFont) {
@@ -124,7 +129,7 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
         final Map<String, String> additionalInfo = new HashMap<>();
         additionalInfo.put("access_token", accessToken);
 
-        preferenceBuilder.setGetCustomerURL(preferenceBuilder.getDefaultBaseURL(), ("/v1/customers/" + customerId), additionalInfo);
+        preferenceBuilder.setGetCustomerURL("https://api.mercadopago.com", ("/v1/customers/" + customerId), additionalInfo);
 
         return preferenceBuilder.build();
     }
