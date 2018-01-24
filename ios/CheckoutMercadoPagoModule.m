@@ -97,7 +97,7 @@ RCT_EXPORT_METHOD(startCheckoutForPaymentData: (NSString *) publicKey: (NSString
     [uiNavigationController setNavigationBarHidden:FALSE];
 }
 
-RCT_EXPORT_METHOD(collectPaymentDataFor:(NSString *)publicKey :(NSString *)preferenceId :(RCTPromiseResolveBlock)resolve :(RCTPromiseRejectBlock) reject) {
+RCT_EXPORT_METHOD(collectPaymentDataFor:(NSString *)publicKey :(NSString *)accessToken :(NSString *)preferenceId :(NSString *)customerId :(RCTPromiseResolveBlock)resolve :(RCTPromiseRejectBlock) reject) {
 	//Get UINavigationController from AppDelegate
 	AppDelegate *share = (AppDelegate *)[UIApplication sharedApplication].delegate;
 	UINavigationController *uiNavigationController = (UINavigationController *) share.window.rootViewController;
@@ -128,6 +128,16 @@ RCT_EXPORT_METHOD(collectPaymentDataFor:(NSString *)publicKey :(NSString *)prefe
 //	[flowPreference disableReviewAndConfirmScreen];
 	[flowPreference disableInstallmentsReviewScreen];
 	[MercadoPagoCheckout setFlowPreference:flowPreference];
+
+    if (accessToken && customerId) {
+        NSString* baseURL = @"https://api.mercadopago.com"; //URLConfigs.MP_API_BASE_URL
+        NSString* customerURI = [NSString stringWithFormat:@"/v1/customers/%@", customerId];
+        NSDictionary* additionalInfo = @{@"access_token": accessToken};
+
+        ServicePreference *servicePreference = [[ServicePreference alloc] init];
+        [servicePreference setGetCustomerWithBaseURL:baseURL URI:customerURI additionalInfo:additionalInfo];
+        [MercadoPagoCheckout setServicePreference:servicePreference];
+    }
 
 	//Set up Cancellation Callback
 	[checkout setCallbackCancelWithCallback:^{

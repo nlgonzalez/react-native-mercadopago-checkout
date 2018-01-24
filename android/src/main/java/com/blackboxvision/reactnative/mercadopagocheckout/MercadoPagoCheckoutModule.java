@@ -13,6 +13,10 @@ import com.mercadopago.core.MercadoPagoCheckout;
 import com.mercadopago.preferences.CheckoutPreference;
 import com.mercadopago.preferences.DecorationPreference;
 import com.mercadopago.preferences.FlowPreference;
+import com.mercadopago.preferences.ServicePreference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule {
     private MercadoPagoCheckoutEventListener eventResultListener;
@@ -69,7 +73,7 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
     }
 
     @ReactMethod
-    public void collectPaymentDataFor(@NonNull String publicKey, @NonNull String checkoutPreferenceId, @NonNull Promise promise) {
+    public void collectPaymentDataFor(@NonNull String publicKey, @NonNull String accessToken, @NonNull String checkoutPreferenceId, @Nullable String customerId, @NonNull Promise promise) {
         this.setCurrentPromise(promise);
 
         final DecorationPreference decorationPreference = this.createDecorationPreference("#C82027", false);
@@ -77,13 +81,18 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
         final CheckoutPreference checkoutPreference = new CheckoutPreference(checkoutPreferenceId);
         final Activity currentActivity = this.getCurrentActivity();
 
-        new MercadoPagoCheckout.Builder()
-                .setDecorationPreference(decorationPreference)
-                .setFlowPreference(flowPreference)
-                .setCheckoutPreference(checkoutPreference)
-                .setActivity(currentActivity)
-                .setPublicKey(publicKey)
-                .startForPaymentData();
+        final MercadoPagoCheckout checkoutBuilder = new MercadoPagoCheckout.Builder();
+        checkoutBuilder.setDecorationPreference(decorationPreference);
+        checkoutBuilder.setFlowPreference(flowPreference);
+        checkoutBuilder.setCheckoutPreference(checkoutPreference);
+        checkoutBuilder.setActivity(currentActivity);
+        checkoutBuilder.setPublicKey(publicKey);
+
+        if (customerId != null) {
+            checkoutBuilder.setServicePreference(this.createServicePreference(accessToken, customerId));
+        }
+
+        checkoutBuilder.startForPaymentData();
     }
 
     private DecorationPreference createDecorationPreference(@NonNull String color, @NonNull Boolean enableDarkFont) {
@@ -106,6 +115,17 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
 //        preferenceBuilder.disablePaymentRejectedScreen();
 //        preferenceBuilder.disableReviewAndConfirmScreen();
         preferenceBuilder.disableInstallmentsReviewScreen();
+        return preferenceBuilder.build();
+    }
+
+    private ServicePreference createServicePreference(@NonNull String accessToken, @NonNull String customerId) {
+        final ServicePreference.Builder preferenceBuilder = new ServicePreference.Builder();
+        
+        final Map<String, String> additionalInfo = new HashMap<>();
+        additionalInfo.put("access_token", accessToken);
+
+        preferenceBuilder.setGetCustomerURL(preferenceBuilder.getDefaultBaseURL(), ("/v1/customers/" + customerId), additionalInfo);
+
         return preferenceBuilder.build();
     }
 
