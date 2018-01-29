@@ -105,8 +105,6 @@ RCT_EXPORT_METHOD(collectPaymentDataFor:(NSString *)publicKey :(NSString *)acces
 	//Set DecorationPreference on MercadoPagoCheckout
 	UIColor *mainColor = [UIColor colorWithRed:200/255.0 green:32/255.0 blue:39/255.0 alpha:1.0];
 	DecorationPreference *decorationPreference = [[DecorationPreference alloc] initWithBaseColor:mainColor];
-	[decorationPreference setCustomFontWithName:@"OpenSans-Semibold"];
-	[decorationPreference setLightCustomFontWithName:@"OpenSans-Regular"];
 	[MercadoPagoCheckout setDecorationPreference: decorationPreference];
 
 	[MercadoPagoContext setLanguageWithLanguage:"es"];
@@ -127,9 +125,10 @@ RCT_EXPORT_METHOD(collectPaymentDataFor:(NSString *)publicKey :(NSString *)acces
 //	[flowPreference disablePaymentRejectedScreen];
 //	[flowPreference disableReviewAndConfirmScreen];
 	[flowPreference disableInstallmentsReviewScreen];
+    [flowPreference setMaxSavedCardsToShowFromString:@"all"];
 	[MercadoPagoCheckout setFlowPreference:flowPreference];
 
-    if (accessToken && customerId) {
+    if (accessToken && customerId && [customerId isKindOfClass:[NSString class]] && ![@"" isEqualToString:customerId]) {
         NSString* baseURL = @"https://api.mercadopago.com"; //URLConfigs.MP_API_BASE_URL
         NSString* customerURI = [NSString stringWithFormat:@"/v1/customers/%@", customerId];
         NSDictionary* additionalInfo = @{@"access_token": accessToken};

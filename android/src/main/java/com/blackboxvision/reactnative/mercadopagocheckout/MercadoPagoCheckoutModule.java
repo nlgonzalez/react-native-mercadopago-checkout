@@ -3,6 +3,7 @@ package com.blackboxvision.reactnative.mercadopagocheckout;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -73,7 +74,7 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
     }
 
     @ReactMethod
-    public void collectPaymentDataFor(@NonNull String publicKey, @NonNull String accessToken, @NonNull String checkoutPreferenceId, @Nullable String customerId, @NonNull Promise promise) {
+    public void collectPaymentDataFor(@NonNull String publicKey, @NonNull String accessToken, @NonNull String checkoutPreferenceId, @NonNull String customerId, @NonNull Promise promise) {
         this.setCurrentPromise(promise);
 
         final DecorationPreference decorationPreference = this.createDecorationPreference("#C82027", false);
@@ -81,11 +82,10 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
         final CheckoutPreference checkoutPreference = new CheckoutPreference(checkoutPreferenceId);
         final Activity currentActivity = this.getCurrentActivity();
 
-        if (customerId != null) {
+        if (TextUtils.isEmpty(customerId)) {
             new MercadoPagoCheckout.Builder()
                 .setDecorationPreference(decorationPreference)
                 .setCheckoutPreference(checkoutPreference)
-                .setServicePreference(this.createServicePreference(accessToken, customerId))
                 .setActivity(currentActivity)
                 .setPublicKey(publicKey)
                 .startForPaymentData();
@@ -94,6 +94,7 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
             new MercadoPagoCheckout.Builder()
                 .setDecorationPreference(decorationPreference)
                 .setCheckoutPreference(checkoutPreference)
+                .setServicePreference(this.createServicePreference(accessToken, customerId))
                 .setActivity(currentActivity)
                 .setPublicKey(publicKey)
                 .startForPaymentData();
@@ -120,6 +121,7 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
 //        preferenceBuilder.disablePaymentRejectedScreen();
 //        preferenceBuilder.disableReviewAndConfirmScreen();
         preferenceBuilder.disableInstallmentsReviewScreen();
+        preferenceBuilder.setMaxSavedCardsToShow("all");
         return preferenceBuilder.build();
     }
 
