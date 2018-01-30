@@ -85,6 +85,7 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
         if (TextUtils.isEmpty(customerId)) {
             new MercadoPagoCheckout.Builder()
                 .setDecorationPreference(decorationPreference)
+                .setFlowPreference(flowPreference)
                 .setCheckoutPreference(checkoutPreference)
                 .setActivity(currentActivity)
                 .setPublicKey(publicKey)
@@ -93,6 +94,7 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
         else {
             new MercadoPagoCheckout.Builder()
                 .setDecorationPreference(decorationPreference)
+                .setFlowPreference(flowPreference)
                 .setCheckoutPreference(checkoutPreference)
                 .setServicePreference(this.createServicePreference(accessToken, customerId))
                 .setActivity(currentActivity)
@@ -121,7 +123,7 @@ public final class MercadoPagoCheckoutModule extends ReactContextBaseJavaModule 
 //        preferenceBuilder.disablePaymentRejectedScreen();
 //        preferenceBuilder.disableReviewAndConfirmScreen();
         preferenceBuilder.disableInstallmentsReviewScreen();
-        preferenceBuilder.setMaxSavedCardsToShow("all");
+        preferenceBuilder.setMaxSavedCardsToShow(FlowPreference.SHOW_ALL_SAVED_CARDS_CODE);
         return preferenceBuilder.build();
     }
 
