@@ -152,7 +152,7 @@ RCT_EXPORT_METHOD(collectPaymentDataFor:(NSString *)publicKey :(NSString *)acces
 			NSString *campaignId = paymentData.discount._id != nil ? paymentData.discount._id : @"";
 			NSString *installments = [@(paymentData.payerCost.installments) stringValue];
 			NSString *paymentMethodId = paymentData.paymentMethod._id;
-			NSString *cardIssuerId = paymentData.issuer._id;
+			NSString *cardIssuerId = paymentData.issuer._id != nil ? paymentData.issuer._id : @"";
 			NSString *cardTokenId = paymentData.token._id;
 
 			NSDictionary *paymentDataDictionary = @{@"paymentMethodId": paymentMethodId, @"cardTokenId": cardTokenId, @"cardIssuerId": cardIssuerId, @"installments": installments, @"campaignId": campaignId };
