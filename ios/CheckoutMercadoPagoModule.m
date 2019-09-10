@@ -107,7 +107,7 @@ RCT_EXPORT_METHOD(collectPaymentDataFor:(NSString *)publicKey :(NSString *)acces
 	DecorationPreference *decorationPreference = [[DecorationPreference alloc] initWithBaseColor:mainColor];
 	[MercadoPagoCheckout setDecorationPreference: decorationPreference];
 
-	[MercadoPagoContext setLanguageWithLanguage:"es"];
+	[MercadoPagoContext setLanguageWithLanguage:Languages_SPANISH];
 
 	//Set CheckoutPreference on MercadoPagoCheckout
 	CheckoutPreference *preference = [[CheckoutPreference alloc] initWith_id:preferenceId];
